@@ -1,37 +1,39 @@
-import React, { useState } from 'react';
+// Frontend: React Contact Form with Formspree
+import React from 'react';
 import { useForm } from '@formspree/react';
-import { z } from 'zod';
-
-// Validation Schema
-const contactSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-});
+import { contactSchema, type ContactFormData } from '../../lib/types'; // Import your validation schema
+import { CONTACT_INFO } from '../../lib/constants'; // Import your contact info constants
 
 export default function ContactForm() {
-  const [state, handleSubmit] = useForm("your-form-id"); // Replace "your-form-id" with Formspree ID
-  const [validationError, setValidationError] = useState<string | null>(null);
+  // Use Formspree to handle form submission
+  const [state, handleSubmit] = useForm("your-form-id"); // Replace 'your-form-id' with your actual Formspree ID
+  const [validationError, setValidationError] = React.useState<string | null>(null);
 
+  // Function to handle form submission
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-
+    e.preventDefault(); // Prevent default form submission
+    const formData = new FormData(e.currentTarget); // Get form data
+    const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
+    
     try {
-      contactSchema.parse(data); // Validate data
-      setValidationError(null);
-      handleSubmit(e); // Submit the form
+      // Validate the form data
+      contactSchema.parse(data);
+      setValidationError(null); // Reset validation error state
+      handleSubmit(e); // Submit the form to Formspree
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        setValidationError(error.errors[0].message);
+      if (error instanceof Error) {
+        setValidationError(error.message); // Set the validation error message
       }
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
-      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Get in Touch</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+        Get in Touch
+      </h2>
+
+      {/* Contact form */}
       <form onSubmit={onSubmit} className="space-y-6">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -60,6 +62,18 @@ export default function ContactForm() {
         </div>
 
         <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Phone (optional)
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+          />
+        </div>
+
+        <div>
           <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Message
           </label>
@@ -72,10 +86,22 @@ export default function ContactForm() {
           />
         </div>
 
-        {validationError && <p className="text-red-600 text-sm">{validationError}</p>}
-        {state.errors?.length > 0 && <p className="text-red-600 text-sm">{state.errors[0].message}</p>}
-        {state.succeeded && <p className="text-green-600 text-sm">Message sent successfully!</p>}
+        {/* Show validation error if present */}
+        {validationError && (
+          <p className="text-red-600 text-sm">{validationError}</p>
+        )}
 
+        {/* Show Formspree error if present */}
+        {state.errors?.length > 0 && (
+          <p className="text-red-600 text-sm">{state.errors[0].message}</p>
+        )}
+
+        {/* Show success message after form submission */}
+        {state.succeeded && (
+          <p className="text-green-600 text-sm">Message sent successfully!</p>
+        )}
+
+        {/* Submit button */}
         <button
           type="submit"
           disabled={state.submitting}
@@ -84,6 +110,17 @@ export default function ContactForm() {
           {state.submitting ? 'Sending...' : 'Send Message'}
         </button>
       </form>
+
+      {/* Direct contact information */}
+      <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+          Direct Contact
+        </h3>
+        <div className="space-y-2 text-gray-600 dark:text-gray-400">
+          <p>Email: {CONTACT_INFO.email}</p>
+          <p>Phone: {CONTACT_INFO.phone}</p>
+        </div>
+      </div>
     </div>
   );
 }
