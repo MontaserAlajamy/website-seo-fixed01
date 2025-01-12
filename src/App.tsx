@@ -8,6 +8,7 @@ import Portfolio from './pages/Portfolio';
 import Admin from './pages/Admin';
 import ContactForm from './components/ContactForm';
 import ParticlesBackground from './components/ParticlesBackground';
+import TianjiScript from './components/TianjiScript'; // Import the TianjiScript component
 
 function App() {
   const [isDarkMode, setIsDarkMode] = React.useState(() => {
@@ -45,6 +46,7 @@ function App() {
         <Footer />
         <ContactForm />
       </div>
+      <TianjiScript /> {/* Include the TianjiScript component here */}
     </Router>
   );
 }
