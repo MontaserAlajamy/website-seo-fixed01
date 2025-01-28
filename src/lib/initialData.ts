@@ -288,7 +288,7 @@ export const initialProjects: Project[] = [
     category: 'Social Media Content',
     vimeoId: '1051130409',
     description: 'Real Estate Video',
-    thumbnail: 'https://vumbnail.com/1051130409.jpg',
+    thumbnail: 'https://i.vimeocdn.com/video/1975874418-07db5554d8ea86d83cf47392360f930ca00b429865b7b771d26f37133812add5-d_1280x720?r=pad',
   },
   {
     id: '37',
